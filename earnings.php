@@ -19,25 +19,36 @@ require('calculations.php');
             }
         </style>
        <!---<script src="calculations.php"></script>-->
-    <p id = "demo" > </p>
+    <p id = "timer" > </p>
+    <p id ="money"> </p>
     <script>
         //translate seconds to hours
         var initialHours = <?php echo hours() ?> * 60 * 60 * 1000;
         // Set the time we're counting down to
-        var deadline= getDeadline(initialHours);
-      
+        var deadline = getDeadline(initialHours);
+
+        //Money per second
+        var monSecond =<?php echo secondWage() ?>;
+
         // Update the count down every 1 second
         var intervalOn;
         timeRemaining(deadline);
         var timeInterval = setInterval(function () {
-            timeRemaining(deadline); 
-            intervalOn=true;
-             }, 1000);
-             
-        //alert(timer + "  ???  " )
-        var timer;
-          //alert(seconds + "  ???  " )
-       
+            timeRemaining(deadline);
+            moneySeconds();
+            intervalOn = true;
+        }, 1000);
+        //update money every second
+        /*var moneyInterval = setInterval(function () {
+            moneySeconds();
+            intervalOn = true;
+        }, 1000);
+        **/
+
+        //alert(initialHours + "  ???  " );
+        var time;
+        //alert(monSecond + "  ???  " );
+
         function timeRemaining(date) {
 
             // Get todays date and current time
@@ -52,52 +63,74 @@ require('calculations.php');
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
             // Output the result in an element with id="demo"
-            document.getElementById("demo").innerHTML = hours + "h "
+            document.getElementById("timer").innerHTML = hours + "h "
                     + minutes + "m " + seconds + "s ";
 
             // If the count down is over, write some text 
             if (distance < 0) {
                 clearInterval(timeInterval);
-                document.getElementById("demo").innerHTML = "Time EXPIRED";
+                document.getElementById("timer").innerHTML = "Time EXPIRED";
             }
         }
         //date
-        function getDeadline(time){
+        function getDeadline(time) {
             return new Date(Date.parse(new Date()) + time);
-            
+
         }
-        function timeSeconds(time){
-            
-        // Get todays date and current time
-            var now = new Date().getTime();  
-            
-        // Find the distance between now an the deadline
+        function getSeconds(time) {
+
+            // Get todays date and current time
+            var now = new Date().getTime();
+
+            // Find the distance between now an the deadline
             var countdown = time - now;
             return countdown;
-          if (countdown < 0) {
+            if (countdown < 0) {
                 clearInterval(timeInterval);
-                document.getElementById("demo").innerHTML = "Time has EXPIRED";
+                document.getElementById("timer").innerHTML = "Time has EXPIRED";
             }
-    }
-        
+        }
+        function moneySeconds() {
+            timer = getSeconds(deadline);
+            var money = 0;
+            //document.getElementById("demo").innerHTML = "$" + timer;
+            money = (money + (initialHours - timer) * monSecond) / 1000;
+            document.getElementById("money").innerHTML = "$ " + money.toFixed(3);
+
+            if (initialHours < timer) {
+                clearInterval(timeInterval);
+                document.getElementById("money").innerHTML = "$ " + money + "your day has ended";
+            }
+
+
+        }
+        //alert(moneySeconds() + "  ???  ");
+
         function toggleTimer() {
             //get countdown in seconds
-            if (!intervalOn){
-                deadline=getDeadline(timer-1);
+            if (!intervalOn) {
+                deadline = getDeadline(timer - 1);
                 timeRemaining(deadline);
                 timeInterval = setInterval(function () {
-                    timeRemaining(deadline);}, 1000);
-                intervalOn=true;
+                    timeRemaining(deadline);
+                    moneySeconds();
+                }, 1000);
+
+                /**moneyInterval = setInterval(function () {
+                    moneySeconds();
+                }, 1000);**/
+                intervalOn = true;
             }
-            else{
-              clearInterval(timeInterval);
-              intervalOn=false;
-              timer = timeSeconds(deadline);
-              
-              
+            else {
+                clearInterval(timeInterval);
+                //clearInterval(moneyInterval);
+                intervalOn = false;
+                timer = getSeconds(deadline);
             }
-            
+
         }
+        
+
     </script>
 </head>   
 <button onclick="toggleTimer()">Lunch</button>
@@ -110,11 +143,11 @@ require('calculations.php');
     </tr>
     <tr>
         <td>Second</td>
-        <td><?php echo secondWage() ?></td>
+        <td><?php echo round(secondWage(),3) ?></td>
     </tr>
     <tr>
         <td>Minute</td>
-        <td><?php echo minuteWage() ?></td>
+        <td><?php echo round(minuteWage(),2) ?></td>
     </tr>
     <tr>
         <td>Hourly</td>
@@ -135,8 +168,8 @@ require('calculations.php');
     <tr>
         <td>Yearly</td>
         <td><?php
-echo anualSalary();
-?></td>
+            echo anualSalary();
+            ?></td>
     </tr>
 </table>
 
