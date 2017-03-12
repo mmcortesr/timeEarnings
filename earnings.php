@@ -6,6 +6,7 @@ and open the template in the editor.
 -->
 <?php
 require('calculations.php');
+require ('util.html');
 ?>
 <html>
     <head>
@@ -30,7 +31,7 @@ require('calculations.php');
         //Money per second
         var monSecond =<?php echo secondWage() ?>;
 
-        // Update the count down every 1 second
+        
         var intervalOn;
         timeRemaining(deadline);
         var timeInterval = setInterval(function () {
@@ -38,7 +39,6 @@ require('calculations.php');
             moneySeconds();
             intervalOn = true;
         }, 1000);
-        //update money every second
         /*var moneyInterval = setInterval(function () {
             moneySeconds();
             intervalOn = true;
@@ -48,7 +48,7 @@ require('calculations.php');
         //alert(initialHours + "  ???  " );
         var time;
         //alert(monSecond + "  ???  " );
-
+        //
         function timeRemaining(date) {
 
             // Get todays date and current time
@@ -72,11 +72,14 @@ require('calculations.php');
                 document.getElementById("timer").innerHTML = "Time EXPIRED";
             }
         }
+        
         //date
         function getDeadline(time) {
             return new Date(Date.parse(new Date()) + time);
 
         }
+        
+        //
         function getSeconds(time) {
 
             // Get todays date and current time
@@ -90,6 +93,8 @@ require('calculations.php');
                 document.getElementById("timer").innerHTML = "Time has EXPIRED";
             }
         }
+        
+        //
         function moneySeconds() {
             timer = getSeconds(deadline);
             var money = 0;

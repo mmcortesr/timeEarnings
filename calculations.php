@@ -30,7 +30,7 @@ function hourlyWage() {
 }
 
 function minuteWage() {
-    return round(hourlyWage()/ 60, 3);
+    return round(hourlyWage()/ 60, 5);
 }
 
 function secondWage() {
