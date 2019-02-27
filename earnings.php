@@ -1,49 +1,69 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <?php
+session_start();
 require('calculations.php');
+
+if (($_POST["wage"] != NULL) && ($_POST["hours"] != NULL)) {
+    $_SESSION["wage"] = $_POST["wage"];
+    $_SESSION["hours"] = $_POST["hours"];
+} else {
+    if (!isset($_SESSION['wage']) && !isset($_SESSION['hours'])) {
+        header('Location: index.php');
+    }
+}
+
+//print_r($_SESSION);
+
 require ('util.html');
 ?>
+<!DOCTYPE html>
 <html>
     <head>
         <title>earn in a day's </title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <style>
             p {
                 text-align: center;
-                font-size: 60px;
+                font-size: 50px;
             }
         </style>
-       <!---<script src="calculations.php"></script>-->
-    <p id = "timer" > </p>
-    <p id ="money"> </p>
+    <div class="container">
+        <div class="col text-center">
+            <button type="button" class="btn btn-outline-info btn-lg" id = "timer" > </button>
+        </div>
+        <br>
+        <div class="col text-center">
+            <button type="button" class="btn btn-outline-info btn-lg " id = "money"> </button>
+        </div>
+        <br
+    </div>
+
+
     <script>
         //translate seconds to hours
         var initialHours = <?php echo hours() ?> * 60 * 60 * 1000;
+
         // Set the time we're counting down to
         var deadline = getDeadline(initialHours);
 
         //Money per second
         var monSecond =<?php echo secondWage() ?>;
 
-        
+
         var intervalOn;
         timeRemaining(deadline);
+
         var timeInterval = setInterval(function () {
             timeRemaining(deadline);
             moneySeconds();
             intervalOn = true;
         }, 1000);
+
         /*var moneyInterval = setInterval(function () {
-            moneySeconds();
-            intervalOn = true;
-        }, 1000);
-        **/
+         moneySeconds();
+         intervalOn = true;
+         }, 1000);
+         **/
 
         //alert(initialHours + "  ???  " );
         var time;
@@ -69,16 +89,24 @@ require ('util.html');
             // If the count down is over, write some text 
             if (distance < 0) {
                 clearInterval(timeInterval);
-                document.getElementById("timer").innerHTML = "Time EXPIRED";
+                document.getElementById("timer").innerHTML = "Time has EXPIRED";
             }
         }
-        
+
+        function changeButton() // no ';' here
+        {
+            if (this.value === "Take a Break")
+                this.value = "Back to Work";
+            else
+                this.value = "Take a Break";
+        }
+
         //date
         function getDeadline(time) {
             return new Date(Date.parse(new Date()) + time);
 
         }
-        
+
         //
         function getSeconds(time) {
 
@@ -90,23 +118,22 @@ require ('util.html');
             return countdown;
             if (countdown < 0) {
                 clearInterval(timeInterval);
-                document.getElementById("timer").innerHTML = "Time has EXPIRED";
+                document.getElementById("timer").innerHTML = "Time EXPIRED";
             }
         }
-        
+
         //
         function moneySeconds() {
             timer = getSeconds(deadline);
             var money = 0;
-            //document.getElementById("demo").innerHTML = "$" + timer;
+
             money = (money + (initialHours - timer) * monSecond) / 1000;
-            document.getElementById("money").innerHTML = "$ " + money.toFixed(3);
-
-            if (initialHours < timer) {
+            if (timer < 0) {
                 clearInterval(timeInterval);
-                document.getElementById("money").innerHTML = "$ " + money + "your day has ended";
+                document.getElementById("money").innerHTML = "You earned $" + money.toFixed(3) + " Today!";
+            } else {
+                document.getElementById("money").innerHTML = "$" + money.toFixed(3);
             }
-
 
         }
         //alert(moneySeconds() + "  ???  ");
@@ -122,11 +149,10 @@ require ('util.html');
                 }, 1000);
 
                 /**moneyInterval = setInterval(function () {
-                    moneySeconds();
-                }, 1000);**/
+                 moneySeconds();
+                 }, 1000);**/
                 intervalOn = true;
-            }
-            else {
+            } else {
                 clearInterval(timeInterval);
                 //clearInterval(moneyInterval);
                 intervalOn = false;
@@ -134,49 +160,67 @@ require ('util.html');
             }
 
         }
-        
+
 
     </script>
-</head>   
-<button onclick="toggleTimer()">Lunch</button>
-
-<table border="1" style="width:100%">
-    <caption>Earnings Calculated</caption>
-    <tr>
-        <th>Time</th>
-        <th>Amount</th>      
-    </tr>
-    <tr>
-        <td>Second</td>
-        <td><?php echo round(secondWage(),3) ?></td>
-    </tr>
-    <tr>
-        <td>Minute</td>
-        <td><?php echo round(minuteWage(),2) ?></td>
-    </tr>
-    <tr>
-        <td>Hourly</td>
-        <td><?php echo hourlyWage() ?></td>
-    </tr>
-    <tr>
-        <td>Daily</td>
-        <td><?php echo dailyWage() ?></td>
-    </tr>
-    <tr>
-        <td>Weekly</td>
-        <td><?php echo weeklyWage() ?></td>
-    </tr>
-    <tr>
-        <td>Monthly</td>
-        <td><?php echo monthlyWage() ?> </td>
-    </tr>
-    <tr>
-        <td>Yearly</td>
-        <td><?php
-            echo anualSalary();
-            ?></td>
-    </tr>
-</table>
-
+</head> 
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col text-center">
+                <button onclick="toggleTimer()" class="btn btn-outline-secondary btn-lg" data-toggle="button" aria-pressed="false" autocomplete="off">Lunch/break</button>
+            </div>
+        </div>
+        <br>
+        <div class="row justify-content-md-center">
+            <div class="col col-lg-5">
+                <table class="table table-sm table-light table-hover table-fit">
+                    <caption> Earnings Calculated </caption>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Amount $$</th>      
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Per Second</td>
+                            <td><?php echo round(secondWage(), 3) ?></td>
+                        </tr>
+                        <tr>
+                            <td> Per Minute</td>
+                            <td><?php echo round(minuteWage(), 2) ?></td>
+                        </tr>
+                        <tr>
+                            <td>Hourly Wage</td>
+                            <td><?php echo hourlyWage() ?></td>
+                        </tr>
+                        <tr>
+                            <td>Daily Wage</td>
+                            <td><?php echo dailyWage() ?></td>
+                        </tr>
+                        <tr>
+                            <td>Weekly Wage</td>
+                            <td><?php echo weeklyWage() ?></td>
+                        </tr>
+                        <tr>
+                            <td>Biweekly Wage</td>
+                            <td><?php echo byWeeklyWage() ?></td>
+                        </tr >
+                        <tr>
+                            <td>Monthly Wage</td>
+                            <td><?php echo monthlyWage() ?> </td>
+                        </tr>
+                        <tr>
+                            <td>Annual Salary</td>
+                            <td><?php
+                                echo anualSalary();
+                                ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

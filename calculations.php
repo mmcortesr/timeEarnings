@@ -6,11 +6,12 @@
  * and open the template in the editor.
  */
 
-function hours(){
-     return $_POST["hours"];
+function hours() {
+    return $_SESSION["hours"];
 }
+
 function anualSalary() {
-    return $_POST["wage"];
+    return $_SESSION["wage"];
 }
 
 function monthlyWage() {
@@ -18,11 +19,15 @@ function monthlyWage() {
 }
 
 function weeklyWage() {
-    return round(anualSalary()/ 52, 2);
+    return round(anualSalary() / 52, 2);
+}
+
+function byWeeklyWage() {
+    return round(weeklyWage() * 2, 2);
 }
 
 function dailyWage() {
-    return round(weeklyWage()/ 5, 2);
+    return round(weeklyWage() / 5, 2);
 }
 
 function hourlyWage() {
@@ -30,11 +35,11 @@ function hourlyWage() {
 }
 
 function minuteWage() {
-    return round(hourlyWage()/ 60, 5);
+    return round(hourlyWage() / 60, 5);
 }
 
 function secondWage() {
-    return round(minuteWage()/ 60, 9);
+    return round(minuteWage() / 60, 9);
 }
 
 ?>

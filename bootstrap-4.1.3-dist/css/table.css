@@ -1,0 +1,7 @@
+
+Make a class that will fit table cell width to content
+ 
+.table-fit {
+    white-space: nowrap;
+    width: 1%;
+}
