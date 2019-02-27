@@ -2,9 +2,9 @@
 session_start();
 require('calculations.php');
 
-if (($_POST["wage"] != NULL) && ($_POST["hours"] != NULL)) {
-    $_SESSION["wage"] = $_POST["wage"];
-    $_SESSION["hours"] = $_POST["hours"];
+if (( filter_input(INPUT_POST, "wage") != NULL) && (( filter_input(INPUT_POST, "hours")))) {
+    $_SESSION["wage"] = filter_input(INPUT_POST, "wage");
+    $_SESSION["hours"] =filter_input(INPUT_POST, "hours");
 } else {
     if (!isset($_SESSION['wage']) && !isset($_SESSION['hours'])) {
         header('Location: index.php');
@@ -21,12 +21,6 @@ require ('util.html');
         <title>earn in a day's </title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <style>
-            p {
-                text-align: center;
-                font-size: 50px;
-            }
-        </style>
     <div class="container">
         <div class="col text-center">
             <button type="button" class="btn btn-outline-info btn-lg" id = "timer" > </button>
