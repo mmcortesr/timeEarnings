@@ -174,7 +174,7 @@ require ('util.html');
         <br>
         <div class="row justify-content-md-center">
             <div class="col col-lg-5">
-                <table class="table table-sm table-light table-hover table-fit">
+                <table class="table table-sm table-light table-hover table-borderless">
                     <caption> Earnings Calculated </caption>
                     <thead>
                         <tr>
