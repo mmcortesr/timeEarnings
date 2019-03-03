@@ -26,20 +26,20 @@ require ('util.html');
     <body>
         <div class="container">
             <h1 class="display-5">What are your Daily Earnings?</h1>
-              <p class="lead"> How much do you earn in different periods? </p>
+              <p class="lead"> How much do you earn in different periods of time? (i.e. weekly, monthly, hourly) </p>
 
             <form name ="myForm" action="earnings.php"
                   onsubmit="return validateForm()" method="post">
                 <div class="form-group row">
                     <label for="hours" class="col-sm-1 col-form-label">Annual Salary</label>
                     <div class="col-sm-8">
-                        <input type="text"  class="form-control" name="wage">
+                        <input type="text"  class="form-control" name="wage" placeholder="Enter your annual salary">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="hours" class="col-sm-1 col-form-label">Hours</label>
                     <div class="col-sm-8">
-                        <input type="text"  class="form-control" name="hours" value="">
+                        <input type="text"  class="form-control" name="hours" value="" placeholder="Enter the number of hours you plan to work today">
                     </div>
                 </div>
                 <div class="form-group row">

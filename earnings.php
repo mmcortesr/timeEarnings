@@ -154,6 +154,9 @@ require ('util.html');
             }
 
         }
+        function home() {
+        location.href = "index.php";
+    };
 
 
     </script>
@@ -162,7 +165,8 @@ require ('util.html');
     <div class="container">
         <div class="row">
             <div class="col text-center">
-                <button onclick="toggleTimer()" class="btn btn-outline-secondary btn-lg" data-toggle="button" aria-pressed="false" autocomplete="off">Lunch/break</button>
+                <button onclick="home()" class="btn btn-outline-secondary btn-lg" data-toggle="button">back </button>
+                <button onclick="toggleTimer()" class="btn btn-outline-secondary btn-lg" data-toggle="button" aria-pressed="false" autocomplete="off">Lunch/break </button>
             </div>
         </div>
         <br>
