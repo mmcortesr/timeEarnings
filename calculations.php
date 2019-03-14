@@ -5,21 +5,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-function hours() {
-    return $_SESSION["hours"];
+function getInitialHours(){
+    return$_SESSION["initialHours"];
 }
 
-function anualSalary() {
+function getDeadline() {
+    return $_SESSION["deadline"];
+}
+
+function getAnualSalary() {
     return $_SESSION["wage"];
 }
 
+function deadline($hours) {
+    return time() + ($hours * 60 * 60);
+}
+
 function monthlyWage() {
-    return round(anualSalary() / 12, 2);
+    return round(getAnualSalary() / 12, 2);
 }
 
 function weeklyWage() {
-    return round(anualSalary() / 52, 2);
+    return round(getAnualSalary() / 52, 2);
 }
 
 function byWeeklyWage() {

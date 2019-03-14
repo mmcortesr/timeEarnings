@@ -2,11 +2,12 @@
 session_start();
 require('calculations.php');
 
-if (( filter_input(INPUT_POST, "wage") != NULL) && (( filter_input(INPUT_POST, "hours")))) {
+if (( filter_input(INPUT_POST, "wage") != NULL) && ( filter_input(INPUT_POST, "hours") != NULL)){
     $_SESSION["wage"] = filter_input(INPUT_POST, "wage");
-    $_SESSION["hours"] =filter_input(INPUT_POST, "hours");
+    $_SESSION["deadline"] = deadline(filter_input(INPUT_POST, "hours"));
+    $_SESSION["initialHours"]=filter_input(INPUT_POST, "hours");
 } else {
-    if (!isset($_SESSION['wage']) && !isset($_SESSION['hours'])) {
+    if (!isset($_SESSION['wage']) && !isset($_SESSION['deadline']) && !isset($_SESSION['initialHours'])) {
         header('Location: index.php');
     }
 }
@@ -18,7 +19,6 @@ require ('util.html');
 <!DOCTYPE html>
 <html>
     <head>
-        <title>earn in a day's </title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <div class="container">
@@ -31,14 +31,13 @@ require ('util.html');
         </div>
         <br
     </div>
-
-
+    
     <script>
-        //translate seconds to hours
-        var initialHours = <?php echo hours() ?> * 60 * 60 * 1000;
-
+        //translate hours into seconds
+        var initialSecs= <?php echo getInitialHours() ?> * 60 * 60 * 1000;
+        //console.log(initialSecs + "Initial hours");
         // Set the time we're counting down to
-        var deadline = getDeadline(initialHours);
+        var deadline = <?php echo getDeadline() ?> * 1000;
 
         //Money per second
         var monSecond =<?php echo secondWage() ?>;
@@ -46,30 +45,22 @@ require ('util.html');
 
         var intervalOn;
         timeRemaining(deadline);
-
+        
+        
         var timeInterval = setInterval(function () {
             timeRemaining(deadline);
-            moneySeconds();
+            earningsSeconds(deadline);
             intervalOn = true;
         }, 1000);
 
-        /*var moneyInterval = setInterval(function () {
-         moneySeconds();
-         intervalOn = true;
-         }, 1000);
-         **/
-
-        //alert(initialHours + "  ???  " );
-        var time;
-        //alert(monSecond + "  ???  " );
-        //
-        function timeRemaining(date) {
+       
+        function timeRemaining(deadline) {
 
             // Get todays date and current time
-            var now = new Date().getTime();
+            var currentTime = new Date().getTime();
 
             // Find the distance between now an the deadline
-            var distance = date - now;
+            var distance = deadline - currentTime;
 
             // Time calculations for days, hours, minutes and seconds
             var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -83,74 +74,60 @@ require ('util.html');
             // If the count down is over, write some text 
             if (distance < 0) {
                 clearInterval(timeInterval);
-                document.getElementById("timer").innerHTML = "Time has EXPIRED";
+                document.getElementById("timer").innerHTML = "Today's work hours have ended!";
             }
         }
 
-        function changeButton() // no ';' here
-        {
-            if (this.value === "Take a Break")
-                this.value = "Back to Work";
-            else
-                this.value = "Take a Break";
-        }
-
-        //date
+        //deadline
         function getDeadline(time) {
             return new Date(Date.parse(new Date()) + time);
-
         }
 
         //
-        function getSeconds(time) {
-
+        function getSeconds(deadline) {
             // Get todays date and current time
-            var now = new Date().getTime();
+            var currentTime = new Date().getTime();
 
             // Find the distance between now an the deadline
-            var countdown = time - now;
-            return countdown;
-            if (countdown < 0) {
+            var secsRemaining = deadline - currentTime;
+            return secsRemaining;
+        }
+        function earningsSeconds(deadline) {
+             var secRemaining = getSeconds(deadline);
+             var earnings=0;
+            //console.log(secRemaining + "remaining Secs");
+
+            if (secRemaining < 0) {
                 clearInterval(timeInterval);
-                document.getElementById("timer").innerHTML = "Time EXPIRED";
+                earnings = (earnings + (initialSecs - 0) * monSecond)/ 1000;
+                document.getElementById("money").innerHTML = "You've earned $" + earnings.toFixed(3) + " Today!";
+
+            } 
+            else {
+                 earnings = (earnings + (initialSecs - secRemaining) * monSecond)/ 1000;
+                    // Output the result in an element with id="demo"
+                 document.getElementById("money").innerHTML = "$" + earnings.toFixed(3);
             }
         }
-
-        //
-        function moneySeconds() {
-            timer = getSeconds(deadline);
-            var money = 0;
-
-            money = (money + (initialHours - timer) * monSecond) / 1000;
-            if (timer < 0) {
-                clearInterval(timeInterval);
-                document.getElementById("money").innerHTML = "You earned $" + money.toFixed(3) + " Today!";
-            } else {
-                document.getElementById("money").innerHTML = "$" + money.toFixed(3);
-            }
-
-        }
-        //alert(moneySeconds() + "  ???  ");
 
         function toggleTimer() {
             //get countdown in seconds
             if (!intervalOn) {
-                deadline = getDeadline(timer - 1);
+                deadline = getDeadline(secsRemaining);
                 timeRemaining(deadline);
+                
+                //console.log(deadline);
+                //console.log(secsRemaining);
                 timeInterval = setInterval(function () {
                     timeRemaining(deadline);
-                    moneySeconds();
+                    earningsSeconds(deadline);
                 }, 1000);
 
-                /**moneyInterval = setInterval(function () {
-                 moneySeconds();
-                 }, 1000);**/
                 intervalOn = true;
             } else {
                 clearInterval(timeInterval);
-                //clearInterval(moneyInterval);
                 intervalOn = false;
-                timer = getSeconds(deadline);
+                 secsRemaining = getSeconds(deadline);
             }
 
         }
@@ -212,7 +189,7 @@ require ('util.html');
                         <tr>
                             <td>Annual Salary</td>
                             <td><?php
-                                echo anualSalary();
+                                echo getAnualSalary();
                                 ?></td>
                         </tr>
                     </tbody>
