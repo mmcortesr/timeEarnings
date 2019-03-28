@@ -1,16 +1,40 @@
 <?php
-
+session_start();
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-function getInitialHours(){
+
+if (filter_input(INPUT_POST, "secs") != NULL) {
+    $_SESSION["secs"] = filter_input(INPUT_POST, "secs");
+}
+if (filter_input(INPUT_POST, "secs") != NULL) {
+    $_SESSION["secs"] = filter_input(INPUT_POST, "secs");
+}
+//print_r($_SESSION);
+
+function getSecondsRemaining() {
+    return $_SESSION["secs"];
+}
+
+function getInitialHours() {
     return$_SESSION["initialHours"];
 }
 
 function getDeadline() {
-    return $_SESSION["deadline"];
+    $deadline=0; 
+     if (getSecondsRemaining() != null)
+    {
+         $deadline =(time() + (getSecondsRemaining()/1000));
+         $_SESSION["deadline"]= $deadline;
+         unset($_SESSION["secs"]);
+    }
+    else {
+     $deadline=$_SESSION["deadline"];
+    }
+    return $deadline;
+   
 }
 
 function getAnualSalary() {

@@ -2,10 +2,10 @@
 session_start();
 require('calculations.php');
 
-if (( filter_input(INPUT_POST, "wage") != NULL) && ( filter_input(INPUT_POST, "hours") != NULL)){
+if (( filter_input(INPUT_POST, "wage") != NULL) && ( filter_input(INPUT_POST, "hours") != NULL)) {
     $_SESSION["wage"] = filter_input(INPUT_POST, "wage");
     $_SESSION["deadline"] = deadline(filter_input(INPUT_POST, "hours"));
-    $_SESSION["initialHours"]=filter_input(INPUT_POST, "hours");
+    $_SESSION["initialHours"] = filter_input(INPUT_POST, "hours");
 } else {
     if (!isset($_SESSION['wage']) && !isset($_SESSION['deadline']) && !isset($_SESSION['initialHours'])) {
         header('Location: index.php');
@@ -13,7 +13,6 @@ if (( filter_input(INPUT_POST, "wage") != NULL) && ( filter_input(INPUT_POST, "h
 }
 
 //print_r($_SESSION);
-
 require ('util.html');
 ?>
 <!DOCTYPE html>
@@ -31,29 +30,30 @@ require ('util.html');
         </div>
         <br
     </div>
-    
+
     <script>
         //translate hours into seconds
-        var initialSecs= <?php echo getInitialHours() ?> * 60 * 60 * 1000;
+        var initialSecs = <?php echo getInitialHours() ?> * 60 * 60 * 1000;
         //console.log(initialSecs + "Initial hours");
         // Set the time we're counting down to
-        var deadline = <?php echo getDeadline() ?> * 1000;
-
-        //Money per second
+        var deadline = <?php echo getDeadline() ?> * 1000;  
+        console.log(deadline + "This is deadline");
+    //Money per second
         var monSecond =<?php echo secondWage() ?>;
 
 
         var intervalOn;
+        //On page load time remaining and earnings per seconds are loaded
         timeRemaining(deadline);
-        
-        
+        earningsSeconds(deadline);
+
         var timeInterval = setInterval(function () {
             timeRemaining(deadline);
             earningsSeconds(deadline);
             intervalOn = true;
         }, 1000);
 
-       
+
         function timeRemaining(deadline) {
 
             // Get todays date and current time
@@ -93,29 +93,29 @@ require ('util.html');
             return secsRemaining;
         }
         function earningsSeconds(deadline) {
-             var secRemaining = getSeconds(deadline);
-             var earnings=0;
+            var secRemaining = getSeconds(deadline);
+            var earnings = 0;
             //console.log(secRemaining + "remaining Secs");
 
             if (secRemaining < 0) {
                 clearInterval(timeInterval);
-                earnings = (earnings + (initialSecs - 0) * monSecond)/ 1000;
+                earnings = (earnings + (initialSecs - 0) * monSecond) / 1000;
                 document.getElementById("money").innerHTML = "You've earned $" + earnings.toFixed(3) + " Today!";
 
-            } 
-            else {
-                 earnings = (earnings + (initialSecs - secRemaining) * monSecond)/ 1000;
-                    // Output the result in an element with id="demo"
-                 document.getElementById("money").innerHTML = "$" + earnings.toFixed(3);
+            } else {
+                earnings = (earnings + (initialSecs - secRemaining) * monSecond) / 1000;
+                // Output the result in an element with id="demo"
+                document.getElementById("money").innerHTML = "$" + earnings.toFixed(3);
             }
         }
 
         function toggleTimer() {
             //get countdown in seconds
             if (!intervalOn) {
-                deadline = getDeadline(secsRemaining);
+                deadline = getDeadline(secsRemaining);                
                 timeRemaining(deadline);
-                
+                earningsSeconds(deadline);
+
                 //console.log(deadline);
                 //console.log(secsRemaining);
                 timeInterval = setInterval(function () {
@@ -127,15 +127,34 @@ require ('util.html');
             } else {
                 clearInterval(timeInterval);
                 intervalOn = false;
-                 secsRemaining = getSeconds(deadline);
+                secsRemaining = getSeconds(deadline);
+                //send seconds remaining to php
+                checkSecondsRemaining(secsRemaining);
             }
-
         }
+
         function home() {
-        location.href = "index.php";
-    };
+            location.href = "index.php";
+        }
+        ;
 
-
+        function checkSecondsRemaining(secs) {
+            console.log(secs);
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("POST", "calculations.php", false);
+            
+            //Send the proper header information along with the request
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            
+            //Call a function when the state changes.
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState === 4 || this.status === 200) {
+                    console.log(this.responseText); 
+                }
+            };
+            xmlhttp.send("secs=" + secs);
+        }
+        //window.onload = checkSecondsRemaining(getSeconds(deadline));
     </script>
 </head> 
 <body>
