@@ -9,9 +9,6 @@ session_start();
 if (filter_input(INPUT_POST, "secs") != NULL) {
     $_SESSION["secs"] = filter_input(INPUT_POST, "secs");
 }
-if (filter_input(INPUT_POST, "secs") != NULL) {
-    $_SESSION["secs"] = filter_input(INPUT_POST, "secs");
-}
 //print_r($_SESSION);
 
 function getSecondsRemaining() {
@@ -26,9 +23,10 @@ function getDeadline() {
     $deadline=0; 
      if (getSecondsRemaining() != null)
     {
-         $deadline =(time() + (getSecondsRemaining()/1000));
-         $_SESSION["deadline"]= $deadline;
-         unset($_SESSION["secs"]);
+        $deadline =(time() + (getSecondsRemaining()/1000));
+        $_SESSION["deadline"]= $deadline;
+
+        unset($_SESSION["secs"]);
     }
     else {
      $deadline=$_SESSION["deadline"];

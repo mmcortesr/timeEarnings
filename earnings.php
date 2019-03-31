@@ -115,9 +115,10 @@ require ('util.html');
                 deadline = getDeadline(secsRemaining);                
                 timeRemaining(deadline);
                 earningsSeconds(deadline);
-
+                //checkSecondsRemaining(-1);
+                
                 //console.log(deadline);
-                //console.log(secsRemaining);
+                //console.log(secsRemaining + "testing");
                 timeInterval = setInterval(function () {
                     timeRemaining(deadline);
                     earningsSeconds(deadline);
