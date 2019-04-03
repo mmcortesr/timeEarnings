@@ -36,9 +36,9 @@ require ('util.html');
         var initialSecs = <?php echo getInitialHours() ?> * 60 * 60 * 1000;
         //console.log(initialSecs + "Initial hours");
         // Set the time we're counting down to
-        var deadline = <?php echo getDeadline() ?> * 1000;  
-        console.log(deadline + "This is deadline");
-    //Money per second
+        var deadline = <?php echo getDeadline() ?> * 1000;
+        //console.log(deadline + "This is deadline");
+        //Money per second
         var monSecond =<?php echo secondWage() ?>;
 
 
@@ -58,6 +58,7 @@ require ('util.html');
 
             // Get todays date and current time
             var currentTime = new Date().getTime();
+            //console.log(currentTime)
 
             // Find the distance between now an the deadline
             var distance = deadline - currentTime;
@@ -112,11 +113,9 @@ require ('util.html');
         function toggleTimer() {
             //get countdown in seconds
             if (!intervalOn) {
-                deadline = getDeadline(secsRemaining);                
+                deadline = getDeadline(secsRemaining);
                 timeRemaining(deadline);
                 earningsSeconds(deadline);
-                //checkSecondsRemaining(-1);
-                
                 //console.log(deadline);
                 //console.log(secsRemaining + "testing");
                 timeInterval = setInterval(function () {
@@ -125,12 +124,14 @@ require ('util.html');
                 }, 1000);
 
                 intervalOn = true;
+                checkSecondsRemaining(deadline.getTime(), intervalOn);
+
             } else {
                 clearInterval(timeInterval);
                 intervalOn = false;
                 secsRemaining = getSeconds(deadline);
                 //send seconds remaining to php
-                checkSecondsRemaining(secsRemaining);
+                checkSecondsRemaining(secsRemaining, intervalOn);
             }
         }
 
@@ -139,21 +140,23 @@ require ('util.html');
         }
         ;
 
-        function checkSecondsRemaining(secs) {
-            console.log(secs);
+        function checkSecondsRemaining(secs, interval) {
+            //console.log(secs);
+            //console.log(interval);
+
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.open("POST", "calculations.php", false);
-            
+
             //Send the proper header information along with the request
             xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            
+
             //Call a function when the state changes.
             xmlhttp.onreadystatechange = function () {
                 if (this.readyState === 4 || this.status === 200) {
-                    console.log(this.responseText); 
+                    console.log(this.responseText);
                 }
             };
-            xmlhttp.send("secs=" + secs);
+            xmlhttp.send("secs=" + secs + "&interval=" + interval);
         }
         //window.onload = checkSecondsRemaining(getSeconds(deadline));
     </script>

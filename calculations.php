@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -9,30 +10,48 @@ session_start();
 if (filter_input(INPUT_POST, "secs") != NULL) {
     $_SESSION["secs"] = filter_input(INPUT_POST, "secs");
 }
-//print_r($_SESSION);
+if (filter_input(INPUT_POST, "interval") != NULL) {
+    $_SESSION["interval"] = filter_input(INPUT_POST, "interval");
+}
+
+print_r($_SESSION);
 
 function getSecondsRemaining() {
     return $_SESSION["secs"];
+}
+
+function getIntervalOn() {
+    return $_SESSION["interval"];
 }
 
 function getInitialHours() {
     return$_SESSION["initialHours"];
 }
 
-function getDeadline() {
-    $deadline=0; 
-     if (getSecondsRemaining() != null)
-    {
-        $deadline =(time() + (getSecondsRemaining()/1000));
-        $_SESSION["deadline"]= $deadline;
+function unsetAjaxVars() {
+    unset($_SESSION["secs"]);
+    unset($_SESSION["interval"]);
+}
 
-        unset($_SESSION["secs"]);
+function getDeadline() {
+    $deadline = 0;
+    if (getSecondsRemaining() != null) {
+        if (getIntervalOn() == 'true') {
+            $secsRemaining = ((getSecondsRemaining() / 1000) - time());
+            if ($secsRemaining < 0) {
+                $deadline = $_SESSION["deadline"];
+            } else {
+                $deadline = time() + $secsRemaining;
+            }
+        } else {
+            $deadline = (time() + (getSecondsRemaining() / 1000));
+        }
+        $_SESSION["deadline"] = $deadline;
+    } else {
+        $deadline = $_SESSION["deadline"];
     }
-    else {
-     $deadline=$_SESSION["deadline"];
-    }
+    unsetAjaxVars();
     return $deadline;
-   
 }
 
 function getAnualSalary() {
