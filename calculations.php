@@ -14,7 +14,7 @@ if (filter_input(INPUT_POST, "interval") != NULL) {
     $_SESSION["interval"] = filter_input(INPUT_POST, "interval");
 }
 
-print_r($_SESSION);
+//print_r($_SESSION);
 
 function getSecondsRemaining() {
     return $_SESSION["secs"];
